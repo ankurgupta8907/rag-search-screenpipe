@@ -51,20 +51,16 @@ export async function GET(request: Request) {
 
     // Calculate time range for indexing
     const endTime = new Date();
-    let startTime: Date;
 
     if (fullReindex) {
-      // Full reindex: go back 30 days or use a very old date
-      startTime = new Date(endTime.getTime() - 30 * 24 * 60 * 60 * 1000);
       // Clear existing documents for full reindex
       store = { documents: [], lastIndexedTime: null };
       console.log("Full reindex requested - clearing existing index");
-    } else {
-      startTime = store.lastIndexedTime
-        ? new Date(store.lastIndexedTime)
-        : new Date(endTime.getTime() - 24 * 60 * 60 * 1000);
     }
 
+    // TODO: Time-based filtering is disabled because Screenpipe API offset is broken.
+    // Once fixed, we should filter by startTime to avoid fetching all data each time.
+    // For now, we deduplicate by document ID to avoid re-indexing existing documents.
     console.log(`Full reindex: ${fullReindex}`);
 
     // Fetch ALL OCR data with pagination (no time filter - get everything)
