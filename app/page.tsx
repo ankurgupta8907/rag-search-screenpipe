@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
 
 interface Message {
   role: "user" | "assistant";
@@ -167,7 +168,7 @@ export default function ChatPage() {
         ) : (
           messages.map((message, index) => (
             <div key={index} className={`message ${message.role}`}>
-              <ReactMarkdown>{message.content}</ReactMarkdown>
+              <ReactMarkdown rehypePlugins={[rehypeSanitize]}>{message.content}</ReactMarkdown>
             </div>
           ))
         )}

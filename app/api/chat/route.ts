@@ -19,6 +19,15 @@ export async function POST(request: NextRequest) {
     const lastMessage = messages[messages.length - 1];
     const query = lastMessage.content;
 
+    // Input validation: limit query length to prevent timeouts
+    const MAX_QUERY_LENGTH = 2000;
+    if (typeof query !== "string" || query.length > MAX_QUERY_LENGTH) {
+      return NextResponse.json(
+        { error: `Query must be a string with maximum ${MAX_QUERY_LENGTH} characters` },
+        { status: 400 }
+      );
+    }
+
     const openai = getOpenAIClient(settings.openaiApiKey);
     const store = loadVectorStore();
 
